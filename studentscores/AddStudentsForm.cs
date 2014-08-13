@@ -20,7 +20,7 @@ public class AddStudentForm : Form {
 	private Button btnOk;
 	private Button btnCancel;
 	
-	//text box
+	//text boxes
 	private TextBox txtbxName;
 	private TextBox txtbxScore;
 	private TextBox txtbxScoreList;
@@ -45,7 +45,7 @@ public class AddStudentForm : Form {
 		Size lblSize = new Size(lblWidth, lblHeight);		
 		Size btnSize = new Size(btnWidth, btnHeight);
 		
-		//instantiate panel controls
+		//-----------------INSTANTIATE PANEL CONTROLS---------------
 		
 		//text labels
 		this.lblName = new Label();
@@ -151,11 +151,10 @@ public class AddStudentForm : Form {
 		this.btnOk.Text = "Ok";
 		this.btnOk.Click += new EventHandler(this.btnOk_Click);
 		
-		//---------------------END SET CONTROL PROPERTiES--------------------
-		
 		//form properties
 		this.ClientSize = new System.Drawing.Size(formWidth, formHeight);
-		
+		this.Text = "Add Student";
+
 		//---------------------ADD CONTROLS-------------------------------
 		
 		//labels
@@ -200,7 +199,11 @@ public class AddStudentForm : Form {
 	}	
 
 	private void btnAddScore_Click(object sender, EventArgs e) {
-		if (this.txtbxScoreList.Text.Equals("")) {
+		string error1 = "Is the data correct?";
+		string error2 = "error: 0 <= score <= 100";
+		if (this.txtbxScoreList.Text.Equals("") || 
+		    	this.txtbxScoreList.Text.Equals(error1) ||
+			    this.txtbxScoreList.Text.Equals(error2)) {
 			this.txtbxScoreList.Text = this.txtbxScore.Text;
 		}
 		else {
@@ -211,7 +214,6 @@ public class AddStudentForm : Form {
 	private void btnClearScores_Click(object sender, EventArgs e) {
 		this.txtbxScoreList.Text = "";
 	}
-	
 
 	//------------------HELPER METHODS--------------------
 
@@ -225,17 +227,16 @@ public class AddStudentForm : Form {
 		}
 	}
 
-
 	private bool isValid(string s) {
-	if (s.Equals("")) {
-		return false;
-	}
-	foreach (char c in s) {
-		if (!((c > 64 && c < 91) || (c > 96 && c < 123) || c == 32)) {
+		if (s.Equals("")) {
 			return false;
 		}
-	}
-	return true;
+		foreach (char c in s) {
+			if (!((c > 64 && c < 91) || (c > 96 && c < 123) || c == 32)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private bool isValidInt(string s) {
@@ -246,6 +247,10 @@ public class AddStudentForm : Form {
 		catch (System.FormatException) {
 			return false;
 		}
+	}
+
+	private bool isValidScore(int s) {
+		return (s >= 0 && s <= 100);
 	}
 
 	private ArrayList convertToList(string s) {
@@ -261,7 +266,7 @@ public class AddStudentForm : Form {
 
 	//-------------------------GETTERS-------------------
 
-	public Student getStudent() {
+	public Student getNewStudent() {
 		return newStudent;
 	}
 }

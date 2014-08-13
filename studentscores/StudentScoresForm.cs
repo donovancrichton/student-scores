@@ -231,7 +231,9 @@ public class StudentScoresForm : Form {
 	}
 		
 	private void btnDelete_Click(object sender, EventArgs e) {
-		
+		int i = this.lstbxStudents.SelectedIndex;
+		this.lstbxStudents.Items.RemoveAt(i);
+		studentList.RemoveAt(i - 1);
 	}
 	
 	private void this_Load(object sender, EventArgs e) {
@@ -243,19 +245,24 @@ public class StudentScoresForm : Form {
 	}
 	
 	private void lstbxStudents_ChangeSelection(object sender, EventArgs e) {
-		Student temp;
-		int index;
-		index = this.lstbxStudents.SelectedIndex;
-		temp = studentList[index] as Student;
-		this.txtbxScoreTotal.Text = temp.getTotal().ToString();
-		this.txtbxScoreCount.Text = temp.getCount().ToString();
-		this.txtbxScoreAvg.Text = temp.getAvg().ToString();
+		try {
+			Student temp;
+			int index;
+			index = this.lstbxStudents.SelectedIndex;
+			temp = studentList[index] as Student;
+			this.txtbxScoreTotal.Text = temp.getTotal().ToString();
+			this.txtbxScoreCount.Text = temp.getCount().ToString();
+			this.txtbxScoreAvg.Text = temp.getAvg().ToString();
+		}
+		catch (System.ArgumentOutOfRangeException) {
+			Console.WriteLine("current selection is out of range...OK!");
+		}
 	}
 
 	private void diagAddStudents_Closed(object sender, EventArgs e) {
 		Student temp;
 		//try {
-			temp = diagAddStudents.getStudent();
+			temp = diagAddStudents.getNewStudent();
 			studentList.Add(temp);
 			this.lstbxStudents.Items.Add(temp.printStudent());
 		//}
