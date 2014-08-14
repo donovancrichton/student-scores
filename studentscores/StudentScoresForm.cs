@@ -191,6 +191,7 @@ public class StudentScoresForm : Form {
 				
 		//dialog properties
 		this.diagAddStudents.Closed += new EventHandler(this.diagAddStudents_Closed);
+		this.diagUpdateScores.Closed += new EventHandler(this.diagUpdateScores_Closed);
 
 		//form properties
 		this.ClientSize = new System.Drawing.Size(formWidth, formHeight);
@@ -227,13 +228,24 @@ public class StudentScoresForm : Form {
 	}
 		
 	private void btnUpdate_Click(object sender, EventArgs e) {
+		int i = this.lstbxStudents.SelectedIndex;
+		Student temp;
+		if (i != -1) {
+			temp = studentList[i] as Student;
+			diagUpdateScores.setStudent(temp);
+		}
+		else {
+			temp = null;
+		}
 		diagUpdateScores.ShowDialog();	
 	}
 		
 	private void btnDelete_Click(object sender, EventArgs e) {
-		int i = this.lstbxStudents.SelectedIndex;
-		this.lstbxStudents.Items.RemoveAt(i);
-		studentList.RemoveAt(i - 1);
+		if (this.lstbxStudents.SelectedIndex != -1) {
+			int i = this.lstbxStudents.SelectedIndex;
+			this.lstbxStudents.Items.RemoveAt(i);
+			studentList.RemoveAt(i);
+		}
 	}
 	
 	private void this_Load(object sender, EventArgs e) {
@@ -256,18 +268,32 @@ public class StudentScoresForm : Form {
 		}
 		catch (System.ArgumentOutOfRangeException) {
 			Console.WriteLine("current selection is out of range...OK!");
+			this.txtbxScoreAvg.Text = "";
+			this.txtbxScoreCount.Text = "";
+			this.txtbxScoreTotal.Text = "";
 		}
 	}
 
 	private void diagAddStudents_Closed(object sender, EventArgs e) {
 		Student temp;
-		//try {
+		try {
 			temp = diagAddStudents.getNewStudent();
 			studentList.Add(temp);
 			this.lstbxStudents.Items.Add(temp.printStudent());
-		//}
+		}
+		catch (System.NullReferenceException) {
+			Console.WriteLine("Close() returned no Student...probably clicked cancel!");
+		}
+	}
 
-		
+	private void diagUpdateScores_Closed(object sender, EventArgs e) {
+		int i = this.lstbxStudents.SelectedIndex;
+		if (i != -1) {
+			Student temp;
+			temp = studentList[i] as Student;
+			this.lstbxStudents.Items.RemoveAt(i);
+			this.lstbxStudents.Items.Insert(i , temp.printStudent());
+		}
 	}
 
 	//------------------------HELPER METHODS-------------------------------
@@ -296,6 +322,5 @@ public class StudentScoresForm : Form {
 		
 		return studentList;
 	}
-	
-	
+
 }

@@ -63,7 +63,12 @@ public class Student {
 		int tempCount;
 		tempTotal = getTotal();
 		tempCount = getCount();
-		return (tempTotal / tempCount);
+		if (tempCount != 0) {
+			return (tempTotal / tempCount);
+		}
+		else {
+			return 0;
+		}
 	}
 	
 	public Student getStudent() {
@@ -84,8 +89,25 @@ public class Student {
 		this.scores.RemoveAt(i);
 		this.scores.Insert(i, score);
 	}
-	
+
+	//--------------------MODIFIERS----------------------
+
 	public void addScore(int score) {
 		this.scores.Add(score);
-	}	
+	}
+
+	public void removeScore(int pos) {
+		this.scores.RemoveAt(pos);
+	}
+
+	public bool equals(Student s2) {
+		if (this.name.Equals(s2.getName()) &&
+			this.scores.Equals(s2.getScores())) {
+				return true;
+		}
+		else {
+			return false;
+		}
+	}
+
 }

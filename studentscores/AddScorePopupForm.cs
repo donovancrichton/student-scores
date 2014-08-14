@@ -6,11 +6,17 @@ public class AddScorePopupForm : Form {
 		//these should be constants
 		private const int FORM_HEIGHT = 100;
 		private const int FORM_WIDTH = 200;
-		Label lblScore;
-		TextBox txtbxScore;
-		Button btnAdd;
-		Button btnCancel;
+
+		//properties
+		private int score = -1;
 		
+		//controls
+		private Label lblScore;
+		private TextBox txtbxScore;
+		private Button btnAdd;
+		private Button btnCancel;
+		
+		//constructor
 		public AddScorePopupForm() {
 			initComponents();
 		}
@@ -61,6 +67,7 @@ public class AddScorePopupForm : Form {
 			this.btnAdd.Font = lblFont;
 			this.btnAdd.Size = btnSize;
 			this.btnAdd.Text = "Add";
+			this.btnAdd.Click += new EventHandler(this.btnAdd_Click);
 			
 			//cancel button
 			xPos = FORM_WIDTH - btnSize.Width - xPadding;
@@ -75,6 +82,7 @@ public class AddScorePopupForm : Form {
 			this.ClientSize = new System.Drawing.Size(FORM_WIDTH, FORM_HEIGHT);
 			this.Text = "Add Score";
 			
+			
 			//add controls
 			this.Controls.Add(this.lblScore);
 			this.Controls.Add(this.txtbxScore);
@@ -83,6 +91,42 @@ public class AddScorePopupForm : Form {
 		}
 		
 		private void btnCancel_Click(object sender, EventArgs e) {
+			this.txtbxScore.Text = "";
+			this.score = -1;
 			this.Close();
+		}
+
+		private void btnAdd_Click(object sender, EventArgs e) {
+			int i;	
+			try {
+				i = int.Parse(this.txtbxScore.Text);
+				if (isValidInt(i)) {
+					score = i;
+					this.txtbxScore.Text = "";
+					this.Close();
+				}
+				else {
+					this.txtbxScore.Text = "0 <= score <= 100";
+				}
+			}
+			catch (System.FormatException) {
+				this.txtbxScore.Text = "Must be a number!";
+			}
+		}
+
+		//-----------------------HELPERS-------------------
+
+		private bool isValidInt(int s) {
+			return (s >= 0 && s <= 100);
+		}
+
+		//----------------------GETTERS--------------------
+		public int getScore() {
+			return this.score;
+		}
+
+		//----------------------SETTERS---------------------
+		public void setScore(int s) {
+			this.score = s;
 		}
 }

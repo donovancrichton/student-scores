@@ -1,11 +1,17 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Collections;
 
 public class UpdateScoresForm : Form {
 	private int formHeight = 400;
 	private int formWidth = 400;
-	
+	private bool usedBtnOk = false;
+	Student s;
+
+	//parent forms
+
+
 	//dialog popups
 	private AddScorePopupForm diagPopupAddScore;
 	private UpdateScorePopupForm diagPopupUpdateScore;
@@ -126,7 +132,7 @@ public class UpdateScoresForm : Form {
 		this.btnRemove.Size = btnSize;
 		this.btnRemove.Font = lblFont;
 		this.btnRemove.Text = "Remove";
-		//this.btnRemove.Click += new EventHandler(this.btnRemove_Click);
+		this.btnRemove.Click += new EventHandler(this.btnRemove_Click);
 		
 		//clear scores button
 		yPos = this.btnRemove.Bottom + (3 * yPadding);
@@ -134,7 +140,7 @@ public class UpdateScoresForm : Form {
 		this.btnClearScores.Size = btnSize;
 		this.btnClearScores.Font = lblFont;
 		this.btnClearScores.Text = "Clear Scores";
-		//this.btnClearScores.Click += new EventHandler(this.btnClearScores_Click);
+		this.btnClearScores.Click += new EventHandler(this.btnClearScores_Click);
 		
 		//cancel button
 		yPos = formHeight - yPadding - btnSize.Height;
@@ -153,7 +159,7 @@ public class UpdateScoresForm : Form {
 		this.btnOk.Size = btnSize;
 		this.btnOk.Font = lblFont;
 		this.btnOk.Text = "Ok";
-		//this.btnOk.Click += new EventHandler(this.btnOk_Click);
+		this.btnOk.Click += new EventHandler(this.btnOk_Click);
 		
 		//scores listbox
 		xPos = lblScores.Right + xPadding;
@@ -168,7 +174,12 @@ public class UpdateScoresForm : Form {
 		//form properties
 		this.ClientSize = new System.Drawing.Size(formWidth, formHeight);
 		this.Text = "Update Student Scores";
-		
+		this.Load += new EventHandler(this.this_Load);
+
+		//dialog popup properties
+		this.diagPopupAddScore.Closed += new EventHandler(diagPopupAddScore_Close);
+		this.diagPopupUpdateScore.Closed += new EventHandler(diagPopupUpdateScore_Close);
+
 		//add form controls
 		
 		//labels
@@ -187,6 +198,8 @@ public class UpdateScoresForm : Form {
 		this.Controls.Add(btnOk);	
 		//---------------------END INIT---------------------------
 	}
+
+	//-----------------------EVENT HANDLERS----------------------
 	
 	private void btnCancel_Click(object sender, EventArgs e) {
 		this.Close();
@@ -197,9 +210,74 @@ public class UpdateScoresForm : Form {
 	}
 	
 	private void btnUpdate_Click(object sender, EventArgs e) {
-		diagPopupUpdateScore.ShowDialog();
+		int i = this.lstbxScores.SelectedIndex;
+		if (i != -1) {
+			diagPopupUpdateScore.ShowDialog();
+		}
+	}
+
+	private void btnOk_Click(object sender, EventArgs e) {
+		if (s != null || s.getScores() != null) {
+			ArrayList scoreList = new ArrayList();
+			foreach (int i in this.lstbxScores.Items) {
+				scoreList.Add(i);
+			}
+			s.setAllScores(scoreList);
+		}
+		this.Close();
+	}
+
+	private void btnClearScores_Click(object sender, EventArgs e) {
+		this.lstbxScores.Items.Clear();
+	}
+
+	private void btnRemove_Click(object sender, EventArgs e) {
+		int i = this.lstbxScores.SelectedIndex;
+		if (i != -1) {
+			this.lstbxScores.Items.RemoveAt(i);
+		}
+	}
+
+	private void this_Load(object sender, EventArgs e) {
+		if (s != null) {
+			this.txtbxName.Text = s.getName();
+			this.lstbxScores.Items.Clear();
+			foreach (int i in s.getScores()) {
+				this.lstbxScores.Items.Add(i);
+			}
+		}
+		else {
+			Console.WriteLine("student = NULL!");	
+		}
+	}
+
+	private void diagPopupAddScore_Close(object sender, EventArgs e) {
+		int i = diagPopupAddScore.getScore();
+		//reset the score once you've caught it.
+		diagPopupAddScore.setScore(-1);
+		this.lstbxScores.Items.Add(i);
+	}
+
+	private void diagPopupUpdateScore_Close(object sender, EventArgs e) {
+		int i = this.lstbxScores.SelectedIndex;
+		if (i != -1) {
+			int s = diagPopupUpdateScore.getScore();
+			if (s != -1) {
+				this.lstbxScores.Items.RemoveAt(i);
+				this.lstbxScores.Items.Insert(i, s);
+				//reset the score once you've caught it.
+				diagPopupUpdateScore.setScore(-1);
+			}
+		}
 	}
 	
-	
+	//---------------------------SETTERS------------------------
+
+	public void setStudent(Student s) {
+		this.s = s;
+	}
+
+	//---------------------------GETTERS---------------------------
+
 
 }
